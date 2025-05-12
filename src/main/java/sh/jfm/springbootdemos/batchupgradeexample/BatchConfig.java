@@ -40,24 +40,6 @@ public class BatchConfig {
     }
 
     @Bean
-    public FlatFileItemReader<User> reader() {
-        return new FlatFileItemReaderBuilder<User>()
-                .name("userItemReader")
-                .resource(new ClassPathResource("users.csv"))
-                .delimited()
-                .names("id", "firstName", "lastName")
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
-                    setTargetType(User.class);
-                }})
-                .build();
-    }
-
-    @Bean
-    public UserNameProcessor processor() {
-        return new UserNameProcessor();
-    }
-
-    @Bean
     public JdbcBatchItemWriter<User> writer() {
         return new JdbcBatchItemWriterBuilder<User>()
                 .sql("INSERT INTO users (id, first_name, last_name) VALUES (:id, :firstName, :lastName)")
@@ -67,22 +49,33 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job importUserJob(JobCompleteLoggerListener listener, Step step1) {
+    public Job importUserJob(JobCompleteLoggerListener listener) {
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(step1)
+                .flow(step1())
                 .end()
                 .build();
     }
 
-    @Bean
-    public Step step1() {
+    private Step step1() {
         return stepBuilderFactory.get("step1")
                 .<User, User>chunk(10)
                 .reader(reader())
-                .processor(processor())
+                .processor(new UserNameProcessor())
                 .writer(writer())
+                .build();
+    }
+
+    private static FlatFileItemReader<User> reader() {
+        return new FlatFileItemReaderBuilder<User>()
+                .name("userItemReader")
+                .resource(new ClassPathResource("users.csv"))
+                .delimited()
+                .names("id", "firstName", "lastName")
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
+                    setTargetType(User.class);
+                }})
                 .build();
     }
 }
