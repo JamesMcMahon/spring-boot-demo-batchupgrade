@@ -1,5 +1,10 @@
 package sh.jfm.springbootdemos.batchupgradeexample;
 
+/**
+ * Simple entity class representing a user in the batch processing system.
+ * This class is used as a data model for reading user records from CSV files
+ * and writing them to the database during batch operations.
+ */
 public class User {
     private Long id;
     private String firstName;

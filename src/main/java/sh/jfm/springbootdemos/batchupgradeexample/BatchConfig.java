@@ -17,6 +17,12 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 
+/**
+ * Configuration class for Spring Batch processing setup.
+ * This class configures the batch job for reading user data from CSV files,
+ * processing the data, and writing it to a database.
+ * It defines beans for readers, writers, processors, and job execution steps.
+ */
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
@@ -47,8 +53,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public UserItemProcessor processor() {
-        return new UserItemProcessor();
+    public UserNameProcessor processor() {
+        return new UserNameProcessor();
     }
 
     @Bean
@@ -61,7 +67,7 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job importUserJob(JobCompletionNotificationListener listener, Step step1) {
+    public Job importUserJob(JobCompleteLoggerListener listener, Step step1) {
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
