@@ -6,16 +6,15 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-
-import javax.sql.DataSource;
+import org.springframework.core.io.FileSystemResource;
 
 /**
  * Configuration class for Spring Batch processing setup.
@@ -27,24 +26,22 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfig {
 
+    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
+
     public final JobBuilderFactory jobBuilderFactory;
 
     public final StepBuilderFactory stepBuilderFactory;
 
-    public final DataSource dataSource;
-
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, DataSource dataSource) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.dataSource = dataSource;
-    }
-
     @Bean
-    public JdbcBatchItemWriter<User> writer() {
-        return new JdbcBatchItemWriterBuilder<User>()
-                .sql("INSERT INTO users (id, first_name, last_name) VALUES (:id, :firstName, :lastName)")
-                .dataSource(dataSource)
-                .beanMapped()
+    public FlatFileItemWriter<User> writer() {
+        return new FlatFileItemWriterBuilder<User>()
+                .name("userItemWriter")
+                .resource(new FileSystemResource("output/users.csv"))
+                .delimited()
+                .names("id", "firstName", "lastName")
                 .build();
     }
 
