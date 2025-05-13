@@ -2,18 +2,21 @@ package sh.jfm.springbootdemos.batchupgradeexample;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
@@ -27,24 +30,34 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfig {
 
+    @Component
+    public static class NoPersistenceBatchConfigurer extends DefaultBatchConfigurer {
+        /**
+         * Empty implementation of setDataSource to prevent Spring Batch from using
+         * a database to store job repository data. This forces Spring Batch to use
+         * an in-memory Map-based job repository instead.
+         */
+        @Override
+        public void setDataSource(DataSource dataSource) {
+        }
+    }
+
+    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
+
     public final JobBuilderFactory jobBuilderFactory;
 
     public final StepBuilderFactory stepBuilderFactory;
 
-    public final DataSource dataSource;
-
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, DataSource dataSource) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.dataSource = dataSource;
-    }
-
     @Bean
-    public JdbcBatchItemWriter<User> writer() {
-        return new JdbcBatchItemWriterBuilder<User>()
-                .sql("INSERT INTO users (id, first_name, last_name) VALUES (:id, :firstName, :lastName)")
-                .dataSource(dataSource)
-                .beanMapped()
+    public FlatFileItemWriter<User> writer() {
+        return new FlatFileItemWriterBuilder<User>()
+                .name("userItemWriter")
+                .resource(new FileSystemResource("output/users.csv"))
+                .delimited()
+                .names("id", "firstName", "lastName")
                 .build();
     }
 
