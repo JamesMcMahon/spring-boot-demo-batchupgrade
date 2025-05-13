@@ -1,15 +1,12 @@
 package sh.jfm.springbootdemos.batchupgradeexample;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.test.JobRepositoryTestUtils;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,16 +23,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * processing data, and writing to an output CSV file.
  */
 @SpringBatchTest
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class BatchIntegrationTests {
 
-    // Mocking this test utils bean because it cannot be instantiated without a Datasource
-    @MockBean
-    private JobRepositoryTestUtils mockedToPreventRunTimeError;
-
     @Autowired
-    private JobExplorer jobExplorer;
+    private JobRepository jobRepository;
 
     /**
      * Tests the complete batch job execution flow.
@@ -50,9 +42,9 @@ public class BatchIntegrationTests {
      */
     @Test
     public void jobRunsAndInsertsCorrectData() throws Exception {
-        var testExecution = jobExplorer.getJobExecutions(
-                Objects.requireNonNull(jobExplorer.getLastJobInstance("importUserJob"))
-        ).get(0);
+        var testExecution = Objects.requireNonNull(
+                jobRepository.getLastJobExecution("importUserJob", new JobParameters())
+        );
         assertThat(testExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         List<User> users = readUsersFromCsv();
         assertThat(users.size()).isEqualTo(3);
