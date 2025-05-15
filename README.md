@@ -47,3 +47,7 @@ Each branch represents a specific configuration to help you understand the upgra
 * `databaseless` - Spring Boot 2.x without database dependency (File-based output)
 * `databaseless-upgrade` - Spring Boot 3.x without database dependency (File-based output)
 
+## Useful Resources
+
+* [Spring Batch 5.0 Migration Guide](https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-5.0-Migration-Guide)
+* [Spring Boot 3.0 Migration Guide - Batch Changes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide#spring-batch-changes)
