@@ -3,8 +3,7 @@ package sh.jfm.springbootdemos.batchupgradeexample;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -28,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class BatchIntegrationTests {
 
     @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
+    private JobExplorer jobExplorer;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -51,16 +51,15 @@ public class BatchIntegrationTests {
      * 3. Verifies the job completed successfully
      * 4. Confirms the correct number of records was inserted
      * 5. Validates the inserted data matches the expected values
-     *
-     * @throws Exception if any error occurs during job execution
      */
     @Test
-    public void jobRunsAndInsertsCorrectData() throws Exception {
-        this.jdbcTemplate.update("delete from users");
+    public void jobRunsAndInsertsCorrectData() {
+        BatchUpgradeExampleApplication.main(new String[]{});
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-
-        assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        var testExecution = jobExplorer.getJobExecutions(
+                Objects.requireNonNull(jobExplorer.getLastJobInstance("importUserJob"))
+        ).get(0);
+        assertThat(testExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class))
                 .isEqualTo(3);
         assertThat(jdbcTemplate.query(
