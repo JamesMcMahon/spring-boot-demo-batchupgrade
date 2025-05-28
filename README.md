@@ -24,7 +24,7 @@ graph LR
 
 ### Databaseless Variant
 
-There is also a variant that writes to a file output instead of a database to show up the process to get Spring Batch
+There is also a variant that writes to a file output instead of a database to show the process to get Spring Batch
 to work without a database connection.
 
 *In general, I don't recommend this approach. If you don't want to use a database (or don't have access to one),
