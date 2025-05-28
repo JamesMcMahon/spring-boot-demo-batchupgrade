@@ -27,6 +27,10 @@ graph LR
 There is also a variant that writes to a file output instead of a database to show up the process to get Spring Batch
 to work without a database connection.
 
+*In general, I don't recommend this approach. If you don't want to use a database (or don't have access to one),
+I recommend replacing the external database dependency with an in-memory H2 database, as seen in the other example.
+This keeps things simpler from a bean-overriding perspective.*
+
 ```mermaid
 graph LR
     A[File Input] --> B[Reader]
