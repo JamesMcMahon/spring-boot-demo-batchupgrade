@@ -46,11 +46,10 @@ public class BatchIntegrationTests {
     /**
      * Tests the complete batch job execution flow.
      * This test:
-     * 1. Cleans up the users table
-     * 2. Executes the batch job
-     * 3. Verifies the job completed successfully
-     * 4. Confirms the correct number of records was inserted
-     * 5. Validates the inserted data matches the expected values
+     * 1. Executes the batch job
+     * 2. Verifies the job completed successfully
+     * 3. Confirms the correct number of records was inserted
+     * 4. Validates the inserted data matches the expected values
      */
     @Test
     public void jobRunsAndInsertsCorrectData() {
