@@ -53,8 +53,6 @@ public class BatchIntegrationTests {
      */
     @Test
     public void jobRunsAndInsertsCorrectData() {
-        BatchUpgradeExampleApplication.main(new String[]{});
-
         var testExecution = jobExplorer.getJobExecutions(
                 Objects.requireNonNull(jobExplorer.getLastJobInstance("importUserJob"))
         ).get(0);
