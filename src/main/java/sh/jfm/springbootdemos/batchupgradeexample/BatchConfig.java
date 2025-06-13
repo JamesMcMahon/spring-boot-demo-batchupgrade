@@ -11,6 +11,7 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -31,28 +32,32 @@ public class BatchConfig {
 
     public final StepBuilderFactory stepBuilderFactory;
 
-    public final DataSource dataSource;
+    private final DataSource userDataSource;
 
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, DataSource dataSource) {
+    public BatchConfig(JobBuilderFactory jobBuilderFactory,
+                       StepBuilderFactory stepBuilderFactory,
+                       @Qualifier("userDataSource") DataSource userDataSource) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
-        this.dataSource = dataSource;
+        this.userDataSource = userDataSource;
     }
 
     @Bean
     public JdbcBatchItemWriter<User> writer() {
         return new JdbcBatchItemWriterBuilder<User>()
                 .sql("INSERT INTO users (id, first_name, last_name) VALUES (:id, :firstName, :lastName)")
-                .dataSource(dataSource)
+                .dataSource(userDataSource)
                 .beanMapped()
                 .build();
     }
 
     @Bean
-    public Job importUserJob(JobCompleteLoggerListener listener) {
+    public Job importUserJob(JobCompleteLoggerListener loggingListener,
+                             JobCompletionAuditListener auditListener) {
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
-                .listener(listener)
+                .listener(loggingListener)   // logs processed users
+                .listener(auditListener)        // persists job outcome
                 .flow(step1())
                 .end()
                 .build();
