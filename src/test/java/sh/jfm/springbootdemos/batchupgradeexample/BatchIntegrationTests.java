@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  */
 @SpringBatchTest
 @SpringBootTest
+@ActiveProfiles(value = "test")
 public class BatchIntegrationTests {
 
     @Autowired
