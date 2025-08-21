@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -33,22 +32,6 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class DataSourceConfig {
-
-    //region Batch DataSource Configuration
-
-    /**
-     * Spring Batch metadata-repository DataSource; annotated with @Primary so it becomes the default.
-     * <p>
-     * This version of initialization is straightforward but requires the URL to be set in the properties file.
-     * Database type is inferred from that URL.
-     */
-    @Bean(name = "batchDataSource") // recognised automatically by Boot/Batch
-    @Primary
-    @ConfigurationProperties("spring.datasource.batch")
-    public DataSource batchDataSource() {
-        return DataSourceBuilder.create().build();
-    }
-    //endregion
 
     //region User DataSource Configuration
 
