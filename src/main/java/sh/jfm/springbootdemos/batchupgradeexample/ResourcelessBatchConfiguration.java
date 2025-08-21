@@ -44,11 +44,6 @@ public class ResourcelessBatchConfiguration extends DefaultBatchConfiguration {
         return new ResourcelessJobRepository();
     }
 
-//    @Override
-//    public JobExplorer jobExplorer() throws BatchConfigurationException {
-//        return new ResourcelessJobExplorer();
-//    }
-
     /**
      * Creates an ApplicationRunner bean that automatically launches the batch job when the application starts.
      * This is necessary because Spring Batch jobs don't execute automatically when the DataSourceAutoConfiguration is
@@ -104,59 +99,4 @@ public class ResourcelessBatchConfiguration extends DefaultBatchConfiguration {
             return null;
         }
     }
-
-/*
-    private static class ResourcelessJobExplorer implements JobExplorer {
-        private final JobRepository jobRepository;
-
-        public ResourcelessJobExplorer(JobRepository jobRepository) {
-            this.jobRepository = jobRepository;
-        }
-
-        @Override
-        public List<JobInstance> getJobInstances(String jobName, int start, int count) {
-            return List.of();
-        }
-
-        @Override
-        public JobExecution getJobExecution(Long executionId) {
-            return null;
-        }
-
-        @Override
-        public StepExecution getStepExecution(Long jobExecutionId, Long stepExecutionId) {
-            return null;
-        }
-
-        @Override
-        public JobInstance getJobInstance(Long instanceId) {
-            return null;
-        }
-
-        @Override
-        public List<JobExecution> getJobExecutions(JobInstance jobInstance) {
-            return List.of();
-        }
-
-        @Override
-        public Set<JobExecution> findRunningJobExecutions(String jobName) {
-            return Set.of();
-        }
-
-        @Override
-        public List<String> getJobNames() {
-            return List.of();
-        }
-
-        @Override
-        public List<JobInstance> findJobInstancesByJobName(String jobName, int start, int count) {
-            return List.of();
-        }
-
-        @Override
-        public long getJobInstanceCount(String jobName) throws NoSuchJobException {
-            return 0;
-        }
-    }
-*/
 }

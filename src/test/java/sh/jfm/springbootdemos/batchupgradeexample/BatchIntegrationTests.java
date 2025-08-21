@@ -3,7 +3,6 @@ package sh.jfm.springbootdemos.batchupgradeexample;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBatchTest
 @SpringBootTest
 public class BatchIntegrationTests {
-
-    @Autowired
-    private JobExplorer jobExplorer;
 
     @Autowired
     private JobRepository jobRepository;
