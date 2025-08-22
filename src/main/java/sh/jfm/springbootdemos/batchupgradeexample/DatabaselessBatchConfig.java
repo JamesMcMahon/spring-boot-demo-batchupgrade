@@ -57,17 +57,17 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
     private static class NoOpDataSource implements DataSource {
         @Override
         public Connection getConnection() throws SQLException {
-            return null;
+            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
         }
 
         @Override
         public Connection getConnection(String username, String password) throws SQLException {
-            return null;
+            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
         }
 
         @Override
         public PrintWriter getLogWriter() throws SQLException {
-            return null;
+            throw new UnsupportedOperationException("This is a no-operation datasource - log writer operations are not supported");
         }
 
         @Override
@@ -86,7 +86,7 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
         @Override
         public <T> T unwrap(Class<T> iface) throws SQLException {
-            return null;
+            throw new UnsupportedOperationException("This is a no-operation datasource - unwrap operations are not supported");
         }
 
         @Override
@@ -96,7 +96,7 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
         @Override
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return null;
+            throw new UnsupportedOperationException("This is a no-operation datasource - logger operations are not supported");
         }
     }
 }
