@@ -9,8 +9,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.ResourcelessJobRepository;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -24,7 +22,6 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("NullableProblems")
 @Configuration
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class ResourcelessBatchConfiguration extends DefaultBatchConfiguration {
 
     @Override
