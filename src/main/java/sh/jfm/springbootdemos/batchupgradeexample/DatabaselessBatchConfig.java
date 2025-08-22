@@ -31,15 +31,13 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
     }
 
     @Override
+    public JobRepository jobRepository() throws BatchConfigurationException {
+        return new ResourcelessJobRepository();
+    }
+
     @Bean
     protected PlatformTransactionManager getTransactionManager() {
         return new ResourcelessTransactionManager();
-    }
-
-
-    @Override
-    public JobRepository jobRepository() throws BatchConfigurationException {
-        return new ResourcelessJobRepository();
     }
 
     /**
