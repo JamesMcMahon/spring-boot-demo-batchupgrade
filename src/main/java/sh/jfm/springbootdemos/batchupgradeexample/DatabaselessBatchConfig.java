@@ -28,7 +28,7 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
     /**
      * Provides a no-operation DataSource implementation that doesn't support actual database connections.
      * This is a hacky workaround because the DataSource should not be used when configuring the ResourcelessJobRepository
-     * but Spring Batch still requires a non-null DataSource.
+     * but Spring Batch still requires a non-null DataSource for configuring a JobExplorer.
      */
     @Override
     protected DataSource getDataSource() {
