@@ -74,7 +74,6 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
         @Override
         public void setLoginTimeout(int seconds) {
-
         }
 
         @Override
