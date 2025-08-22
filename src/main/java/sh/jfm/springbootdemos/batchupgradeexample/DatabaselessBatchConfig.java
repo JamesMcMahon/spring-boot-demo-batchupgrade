@@ -25,16 +25,33 @@ import java.util.logging.Logger;
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
+    /**
+     * Provides a no-operation DataSource implementation that doesn't support actual database connections.
+     * This is a hacky workaround because the DataSource should not be used when configuring the ResourcelessJobRepository
+     * but Spring Batch still requires a non-null DataSource.
+     */
     @Override
     protected DataSource getDataSource() {
         return new NoOpDataSource();
     }
 
+    /**
+     * Use ResourcelessJobRepository for managing job execution metadata without persistent storage.
+     * This implementation is suitable for scenarios where job execution data doesn't need to be persisted,
+     * such as testing or simple batch processing workflows.
+     *
+     * @see <a href="https://docs.spring.io/spring-batch/reference/whatsnew.html#new-resourceless-job-repository">Spring Batch Documentation</a>
+     */
     @Override
     public JobRepository jobRepository() throws BatchConfigurationException {
         return new ResourcelessJobRepository();
     }
 
+    /**
+     * Creates a ResourcelessTransactionManager bean for handling transactions without persistent storage.
+     * This implementation is suitable for scenarios where transaction management isn't required,
+     * such as testing or simple batch processing workflows.
+     */
     @Bean
     protected PlatformTransactionManager getTransactionManager() {
         return new ResourcelessTransactionManager();
