@@ -16,13 +16,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 @SuppressWarnings("NullableProblems")
 @Configuration
-public class ResourcelessBatchConfiguration extends DefaultBatchConfiguration {
+public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
     @Override
     protected DataSource getDataSource() {
@@ -53,47 +51,46 @@ public class ResourcelessBatchConfiguration extends DefaultBatchConfiguration {
 
     private static class NoOpDataSource implements DataSource {
         @Override
-        public Connection getConnection() throws SQLException {
-            return null;
+        public Connection getConnection() {
+            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
         }
 
         @Override
-        public Connection getConnection(String username, String password) throws SQLException {
-            return null;
+        public Connection getConnection(String username, String password) {
+            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
         }
 
         @Override
-        public PrintWriter getLogWriter() throws SQLException {
-            return null;
+        public PrintWriter getLogWriter() {
+            throw new UnsupportedOperationException("This is a no-operation datasource - log writer operations are not supported");
         }
 
         @Override
-        public void setLogWriter(PrintWriter out) throws SQLException {
+        public void setLogWriter(PrintWriter out) {
         }
 
         @Override
-        public void setLoginTimeout(int seconds) throws SQLException {
-
+        public void setLoginTimeout(int seconds) {
         }
 
         @Override
-        public int getLoginTimeout() throws SQLException {
+        public int getLoginTimeout() {
             return 0;
         }
 
         @Override
-        public <T> T unwrap(Class<T> iface) throws SQLException {
-            return null;
+        public <T> T unwrap(Class<T> iface) {
+            throw new UnsupportedOperationException("This is a no-operation datasource - unwrap operations are not supported");
         }
 
         @Override
-        public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        public boolean isWrapperFor(Class<?> iface) {
             return false;
         }
 
         @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            return null;
+        public Logger getParentLogger() {
+            throw new UnsupportedOperationException("This is a no-operation datasource - logger operations are not supported");
         }
     }
 }
