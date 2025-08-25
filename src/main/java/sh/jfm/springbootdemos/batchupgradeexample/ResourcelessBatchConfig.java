@@ -1,16 +1,15 @@
 package sh.jfm.springbootdemos.batchupgradeexample;
 
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.BatchConfigurationException;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.ResourcelessJobRepository;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -24,7 +23,6 @@ import java.util.Set;
  */
 @SuppressWarnings("NullableProblems")
 @Configuration
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
 
     private final ResourcelessJobRepository resourcelessJobRepository;
@@ -68,16 +66,6 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
      */
     protected DataSource getDataSource() {
         throw new UnsupportedOperationException("DataSource is not used by ResourcelessJobRepository");
-    }
-
-    /**
-     * Creates an ApplicationRunner bean that automatically launches the batch job when the application starts.
-     * This is necessary because Spring Batch jobs don't execute automatically when the DataSourceAutoConfiguration is
-     * excluded.
-     */
-    @Bean
-    public ApplicationRunner batchRunner(Job job, JobLauncher jobLauncher) {
-        return args -> jobLauncher.run(job, new JobParameters());
     }
 
     /**
