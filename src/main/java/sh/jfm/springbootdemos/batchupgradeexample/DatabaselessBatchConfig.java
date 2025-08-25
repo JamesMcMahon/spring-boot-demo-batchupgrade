@@ -16,29 +16,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.io.PrintWriter;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 @SuppressWarnings("NullableProblems")
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
 
-    /**
-     * Provides a no-operation DataSource implementation that doesn't support actual database connections.
-     * This is a hacky workaround because the DataSource should not be used when configuring the ResourcelessJobRepository
-     * but Spring Batch still requires a non-null DataSource for configuring a JobExplorer.
-     */
-    protected DataSource getDataSource() {
-        return new NoOpDataSource();
-    }
+    private final ResourcelessJobRepository resourcelessJobRepository;
 
-    @Override
-    public JobExplorer jobExplorer() throws BatchConfigurationException {
-        return new ResourcelessJobExplorer((ResourcelessJobRepository) jobRepository());
+    public DatabaselessBatchConfig() {
+        this.resourcelessJobRepository = new ResourcelessJobRepository();
     }
 
     /**
@@ -50,7 +39,15 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
      */
     @Override
     public JobRepository jobRepository() throws BatchConfigurationException {
-        return new ResourcelessJobRepository();
+        return resourcelessJobRepository;
+    }
+
+    /**
+     * Use ResourcelessJobExplorer for querying job execution metadata without persistent storage.
+     */
+    @Override
+    public JobExplorer jobExplorer() throws BatchConfigurationException {
+        return new ResourcelessJobExplorer(resourcelessJobRepository);
     }
 
     /**
@@ -64,6 +61,13 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
     }
 
     /**
+     * Override to prevent {@link DefaultBatchConfiguration} from throwing an error due to the absence of a DataSource.
+     */
+    protected DataSource getDataSource() {
+        throw new UnsupportedOperationException("DataSource is not used by ResourcelessJobRepository");
+    }
+
+    /**
      * Creates an ApplicationRunner bean that automatically launches the batch job when the application starts.
      * This is necessary because Spring Batch jobs don't execute automatically when the DataSourceAutoConfiguration is
      * excluded.
@@ -73,52 +77,11 @@ public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
         return args -> jobLauncher.run(job, new JobParameters());
     }
 
-    private static class NoOpDataSource implements DataSource {
-        @Override
-        public Connection getConnection() {
-            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
-        }
-
-        @Override
-        public Connection getConnection(String username, String password) {
-            throw new UnsupportedOperationException("This is a no-operation datasource - database connections are not supported");
-        }
-
-        @Override
-        public PrintWriter getLogWriter() {
-            throw new UnsupportedOperationException("This is a no-operation datasource - log writer operations are not supported");
-        }
-
-        @Override
-        public void setLogWriter(PrintWriter out) {
-        }
-
-        @Override
-        public void setLoginTimeout(int seconds) {
-        }
-
-        @Override
-        public int getLoginTimeout() {
-            return 0;
-        }
-
-        @Override
-        public <T> T unwrap(Class<T> iface) {
-            throw new UnsupportedOperationException("This is a no-operation datasource - unwrap operations are not supported");
-        }
-
-        @Override
-        public boolean isWrapperFor(Class<?> iface) {
-            return false;
-        }
-
-        @Override
-        public Logger getParentLogger() {
-            throw new UnsupportedOperationException("This is a no-operation datasource - logger operations are not supported");
-        }
-    }
-
-    // TODO work around problems listed at https://github.com/spring-projects/spring-batch/issues/4718#issuecomment-2897323755
+    /**
+     * JobExplore based around {@link ResourcelessJobRepository}.
+     * <p>
+     * Designed to work around design problems <a href="https://github.com/spring-projects/spring-batch/issues/4718#issuecomment-2897323755">resolved in Spring Batch 6</a>
+     */
     private static class ResourcelessJobExplorer implements JobExplorer {
 
         private final ResourcelessJobRepository jobRepository;
