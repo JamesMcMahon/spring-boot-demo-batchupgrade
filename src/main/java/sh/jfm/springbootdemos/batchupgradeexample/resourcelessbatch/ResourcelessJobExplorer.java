@@ -26,18 +26,31 @@ class ResourcelessJobExplorer implements JobExplorer {
 
     @Override
     public List<JobInstance> getJobInstances(String jobName, int start, int count) {
-        return List.of(getJobInstance());
+        var jobInstance = getJobInstance();
+        if (jobInstance == null || !jobName.equals(jobInstance.getJobName())) {
+            return List.of();
+        }
+        return List.of(jobInstance);
     }
 
     @Override
+    @Nullable
     public JobExecution getJobExecution(@Nullable Long executionId) {
-        return getJobExecution();
+        var jobExecution = getJobExecution();
+        if (jobExecution == null || jobExecution.getId().equals(executionId)) {
+            return null;
+        }
+        return jobExecution;
     }
 
     @Override
     @Nullable
     public StepExecution getStepExecution(@Nullable Long jobExecutionId, @Nullable Long stepExecutionId) {
-        return getJobExecution().getStepExecutions()
+        var jobExecution = getJobExecution();
+        if (jobExecution == null || jobExecution.getId().equals(jobExecutionId)) {
+            return null;
+        }
+        return jobExecution.getStepExecutions()
                 .stream()
                 .filter(stepExecution -> stepExecution.getJobExecutionId().equals(jobExecutionId))
                 .filter(stepExecution -> stepExecution.getId().equals(stepExecutionId))
@@ -46,19 +59,28 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
+    @Nullable
     public JobInstance getJobInstance(@Nullable Long instanceId) {
-        return getJobInstance();
+        JobInstance jobInstance = getJobInstance();
+        if (jobInstance == null || jobInstance.getId().equals(instanceId)) {
+            return null;
+        }
+        return jobInstance;
     }
 
     @Override
     public List<JobExecution> getJobExecutions(JobInstance jobInstance) {
-        return List.of(getJobExecution());
+        var jobExecution = getJobExecution();
+        if (jobExecution == null || !jobInstance.equals(jobExecution.getJobInstance())) {
+            return List.of();
+        }
+        return List.of(jobExecution);
     }
 
     @Override
     public Set<JobExecution> findRunningJobExecutions(@Nullable String jobName) {
         var jobExecution = getJobExecution();
-        if (!jobExecution.isRunning()) {
+        if (jobExecution == null || !jobExecution.isRunning()) {
             return Set.of();
         }
         return Set.of(jobExecution);
@@ -66,11 +88,15 @@ class ResourcelessJobExplorer implements JobExplorer {
 
     @Override
     public List<String> getJobNames() {
-        return List.of(getJobInstance().getJobName());
+        var jobInstance = getJobInstance();
+        if (jobInstance == null) {
+            return List.of();
+        }
+        return List.of(jobInstance.getJobName());
     }
 
     @Override
-    public List<JobInstance> findJobInstancesByJobName(String jobName, int start, int count) {
+    public List<JobInstance> findJobInstancesByJobName(@Nullable String jobName, int start, int count) {
         var jobInstance = getLastJobInstance(jobName);
         if (jobInstance == null) {
             return List.of();
@@ -85,15 +111,16 @@ class ResourcelessJobExplorer implements JobExplorer {
 
     @Override
     @Nullable
-    public JobInstance getLastJobInstance(String jobName) {
+    public JobInstance getLastJobInstance(@Nullable String jobName) {
         var jobInstance = getJobInstance();
-        if (jobName.equals(jobInstance.getJobName())) {
-            return jobInstance;
+        if (jobInstance == null || !jobInstance.getJobName().equals(jobName)) {
+            return null;
         }
-        return null;
+        return jobInstance;
     }
 
     @Override
+    @Nullable
     public JobInstance getJobInstance(String jobName, JobParameters jobParameters) {
         return getJobInstance();
     }
@@ -107,11 +134,19 @@ class ResourcelessJobExplorer implements JobExplorer {
         return null;
     }
 
+    @Nullable
     private JobInstance getJobInstance() {
-        return getJobExecution().getJobInstance();
+        var jobExecution = getJobExecution();
+        if (jobExecution == null) {
+            return null;
+        }
+        return jobExecution.getJobInstance();
     }
 
+    @SuppressWarnings("DataFlowIssue")
+    @Nullable
     private JobExecution getJobExecution() {
+        // parameters don't matter here as there is only one execution for a ResourcelessJobRepository
         return jobRepository.getLastJobExecution("", new JobParameters());
     }
 }
