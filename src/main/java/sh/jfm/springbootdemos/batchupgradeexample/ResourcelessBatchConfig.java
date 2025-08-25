@@ -19,6 +19,9 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Configuration class to avoid the usage of a database for batch processing.
+ */
 @SuppressWarnings("NullableProblems")
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
