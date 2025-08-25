@@ -73,14 +73,6 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
             this.jobRepository = jobRepository;
         }
 
-        private JobInstance getJobInstance() {
-            return getJobExecution().getJobInstance();
-        }
-
-        private JobExecution getJobExecution() {
-            return jobRepository.getLastJobExecution("", new JobParameters());
-        }
-
         @Override
         public List<JobInstance> getJobInstances(String jobName, int start, int count) {
             return List.of(getJobInstance());
@@ -137,6 +129,14 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
         @Override
         public long getJobInstanceCount(String jobName) {
             return findJobInstancesByJobName(jobName, 0, 1).size();
+        }
+
+        private JobInstance getJobInstance() {
+            return getJobExecution().getJobInstance();
+        }
+
+        private JobExecution getJobExecution() {
+            return jobRepository.getLastJobExecution("", new JobParameters());
         }
     }
 }
