@@ -2,8 +2,7 @@ package sh.jfm.springbootdemos.batchupgradeexample;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class BatchIntegrationTests {
 
     @Autowired
-    private JobRepository jobRepository;
+    private JobExplorer jobExplorer;
 
     private JdbcTemplate userJdbcTemplate;
     private JdbcTemplate auditJdbcTemplate;
@@ -59,9 +58,9 @@ public class BatchIntegrationTests {
      */
     @Test
     public void jobRunsAndInsertsCorrectData() {
-        var testExecution = Objects.requireNonNull(
-                jobRepository.getLastJobExecution("importUserJob", new JobParameters())
-        );
+        var testExecution = jobExplorer.getJobExecutions(
+                Objects.requireNonNull(jobExplorer.getLastJobInstance("importUserJob"))
+        ).getFirst();
 
         assertThat(testExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         assertThat(userJdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class))
