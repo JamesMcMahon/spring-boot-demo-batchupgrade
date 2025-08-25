@@ -65,7 +65,7 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
      * Override to prevent {@link DefaultBatchConfiguration} from throwing an error due to the absence of a DataSource.
      */
     protected DataSource getDataSource() {
-        throw new UnsupportedOperationException("DataSource is not used by ResourcelessJobRepository");
+        throw new UnsupportedOperationException("DataSource is not used by ResourcelessBatchConfig");
     }
 
     /**
