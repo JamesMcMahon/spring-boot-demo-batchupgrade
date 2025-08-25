@@ -119,8 +119,8 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
 
         @Override
         public List<JobInstance> findJobInstancesByJobName(String jobName, int start, int count) {
-            var jobInstance = getJobInstance();
-            if (!jobName.equals(jobInstance.getJobName())) {
+            var jobInstance = getLastJobInstance(jobName);
+            if (jobInstance == null) {
                 return List.of();
             }
             return List.of(jobInstance);
@@ -129,6 +129,28 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
         @Override
         public long getJobInstanceCount(String jobName) {
             return findJobInstancesByJobName(jobName, 0, 1).size();
+        }
+
+        @Override
+        public JobInstance getLastJobInstance(String jobName) {
+            var jobInstance = getJobInstance();
+            if (jobName.equals(jobInstance.getJobName())) {
+                return jobInstance;
+            }
+            return null;
+        }
+
+        @Override
+        public JobInstance getJobInstance(String jobName, JobParameters jobParameters) {
+            return getJobInstance();
+        }
+
+        @Override
+        public JobExecution getLastJobExecution(JobInstance jobInstance) {
+            if (jobInstance.equals(getJobInstance())) {
+                return getJobExecution();
+            }
+            return null;
         }
 
         private JobInstance getJobInstance() {
