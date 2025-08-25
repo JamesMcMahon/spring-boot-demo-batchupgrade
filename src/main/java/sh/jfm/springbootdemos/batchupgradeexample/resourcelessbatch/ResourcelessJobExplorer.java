@@ -1,5 +1,6 @@
 package sh.jfm.springbootdemos.batchupgradeexample.resourcelessbatch;
 
+import jakarta.annotation.Nullable;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
@@ -29,12 +30,13 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
-    public JobExecution getJobExecution(Long executionId) {
+    public JobExecution getJobExecution(@Nullable Long executionId) {
         return getJobExecution();
     }
 
     @Override
-    public StepExecution getStepExecution(Long jobExecutionId, Long stepExecutionId) {
+    @Nullable
+    public StepExecution getStepExecution(@Nullable Long jobExecutionId, @Nullable Long stepExecutionId) {
         return getJobExecution().getStepExecutions()
                 .stream()
                 .filter(stepExecution -> stepExecution.getJobExecutionId().equals(jobExecutionId))
@@ -44,7 +46,7 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
-    public JobInstance getJobInstance(Long instanceId) {
+    public JobInstance getJobInstance(@Nullable Long instanceId) {
         return getJobInstance();
     }
 
@@ -54,7 +56,7 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
-    public Set<JobExecution> findRunningJobExecutions(String jobName) {
+    public Set<JobExecution> findRunningJobExecutions(@Nullable String jobName) {
         var jobExecution = getJobExecution();
         if (!jobExecution.isRunning()) {
             return Set.of();
@@ -77,11 +79,12 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
-    public long getJobInstanceCount(String jobName) {
+    public long getJobInstanceCount(@Nullable String jobName) {
         return findJobInstancesByJobName(jobName, 0, 1).size();
     }
 
     @Override
+    @Nullable
     public JobInstance getLastJobInstance(String jobName) {
         var jobInstance = getJobInstance();
         if (jobName.equals(jobInstance.getJobName())) {
@@ -96,6 +99,7 @@ class ResourcelessJobExplorer implements JobExplorer {
     }
 
     @Override
+    @Nullable
     public JobExecution getLastJobExecution(JobInstance jobInstance) {
         if (jobInstance.equals(getJobInstance())) {
             return getJobExecution();

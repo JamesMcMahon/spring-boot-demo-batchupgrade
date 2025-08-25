@@ -13,7 +13,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * Configuration class to avoid the usage of a database for batch processing.
  */
-@SuppressWarnings("NullableProblems")
 @Configuration
 public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
 
