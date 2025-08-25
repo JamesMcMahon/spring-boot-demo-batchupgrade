@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Set;
 
@@ -59,13 +58,6 @@ public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
     @Bean
     protected PlatformTransactionManager getTransactionManager() {
         return new ResourcelessTransactionManager();
-    }
-
-    /**
-     * Override to prevent {@link DefaultBatchConfiguration} from throwing an error due to the absence of a DataSource.
-     */
-    protected DataSource getDataSource() {
-        throw new UnsupportedOperationException("DataSource is not used by ResourcelessBatchConfig");
     }
 
     /**
