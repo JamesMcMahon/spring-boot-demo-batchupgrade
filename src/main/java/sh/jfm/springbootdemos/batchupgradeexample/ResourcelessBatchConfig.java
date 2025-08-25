@@ -22,11 +22,11 @@ import java.util.Set;
 @SuppressWarnings("NullableProblems")
 @Configuration
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-public class DatabaselessBatchConfig extends DefaultBatchConfiguration {
+public class ResourcelessBatchConfig extends DefaultBatchConfiguration {
 
     private final ResourcelessJobRepository resourcelessJobRepository;
 
-    public DatabaselessBatchConfig() {
+    public ResourcelessBatchConfig() {
         this.resourcelessJobRepository = new ResourcelessJobRepository();
     }
 
