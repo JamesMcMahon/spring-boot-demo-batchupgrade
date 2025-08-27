@@ -108,6 +108,9 @@ graph LR
 
 ### Multiple Databases without a Batch Database Variant
 
+* [multiple-databases-nobatchdb branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases-nobatchdb)
+* [multiple-databases-nobatchdb-upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases-nobatchdb-upgrade)
+
 Same as the Multiple Databases variant, but without a Batch Database. Uses the `resourcelessbatch` package from the
 Databaseless variant to make Spring Batch work without a database. I recommend reading the Databaseless variant
 description to understand how this works.
