@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BatchUpgradeExampleApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BatchUpgradeExampleApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BatchUpgradeExampleApplication.class, args);
+    }
 
 }

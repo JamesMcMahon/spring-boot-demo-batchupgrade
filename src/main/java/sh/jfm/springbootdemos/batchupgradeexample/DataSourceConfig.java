@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -21,13 +20,13 @@ import javax.sql.DataSource;
  *   <li><strong>auditDataSource</strong> – separate audit schema</li>
  * </ul>
  * <p>
- * Spring Boot 2.7 autoconfigures only one DataSource.
+ * Spring Boot 3 autoconfigures only one DataSource.
  * If you use more than one DataSource, you will need to manually initialize schemas as demoed in this class.
  * <p>
  * If you need specific connection pooling settings, you should construct a DataSource using {@code DataSourceProperties}.
  * The audit DataSource below demonstrates this approach.
  *
- * @see <a href="https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/howto.html#howto.data-access.configure-two-datasources">Boot 2.7 reference guide § “Data Access > Configure Two DataSources”</a>
+ * @see <a href="https://docs.spring.io/spring-boot/how-to/data-access.html#howto.data-access.configure-two-datasources">Boot 3 reference guide § “Data Access > Configure Two DataSources”</a>
  */
 @Configuration
 public class DataSourceConfig {
@@ -37,10 +36,9 @@ public class DataSourceConfig {
     /**
      * DataSource for user data written by the job.
      *
-     * @see <a href="https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/howto.html#howto.data-access.configure-custom-datasource">Configure a Custom DataSource</a>
+     * @see <a href="https://docs.spring.io/spring-boot/how-to/data-access.html#howto.data-access.configure-custom-datasource">Configure a Custom DataSource</a>
      */
     @Bean(name = "userDataSource")
-    @Primary
     @ConfigurationProperties("app.datasource.user")
     public DataSource userDataSource() {
         return DataSourceBuilder.create().build();
@@ -63,7 +61,7 @@ public class DataSourceConfig {
      * Use a {@link org.springframework.boot.autoconfigure.jdbc DataSourceProperties} to allow the use of specific
      * connection pool configuration.
      *
-     * @see <a href="https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/howto.html#howto.data-access.configure-custom-datasource">Configure a Custom DataSource</a>
+     * @see <a href="https://docs.spring.io/spring-boot/how-to/data-access.html#howto.data-access.configure-custom-datasource">Configure a Custom DataSource</a>
      */
     @Bean
     @ConfigurationProperties("app.datasource.audit")
