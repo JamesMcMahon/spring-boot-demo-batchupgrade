@@ -3,13 +3,29 @@
 This project demonstrates the upgrade process from Spring Boot 2 to Spring Boot 3, along with the corresponding Spring
 Batch upgrade from version 4 to 5.
 
-## Project Structure
+## How To Use This Repo
 
-This project demonstrates a Spring Batch job that processes data in the following flow:
+There are several variants represented in this repo. Each use case has a Spring Boot 2 branch and then a corresponding `-upgrade`
+branch that demos the upgrade process to Spring Boot 3.
+
+The easiest way to quickly see the upgrade process is to check the diffs between the non-upgraded branch and the 
+upgraded branch. You can do this quickly by selecting and viewing the branch in the GitHub UI and clicking on text at
+the top that says "This branch is N commits ahead of main." and looking at the single upgrade commit. 
+
+Alternatively, you can clone the repo and run something along the lines `git diff main upgrade` to see the diff.
+
+## Project Variants
+
+### Simple Variant
+
+* [main branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/main)
+* [upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/upgrade)
+
+This simple variant demonstrates a Spring Batch job that processes data in the following flow:
 
 1. Reader - Reads simple "user" input data from a csv file
 2. Processor - Transforms the user data by uppercasing both first and last names
-3. Writer - Writes transformed data into a database
+3. Writer - Writes transformed data into an H2 database
 
 ```mermaid
 graph LR
@@ -23,6 +39,9 @@ graph LR
 ```
 
 ### Databaseless Variant
+
+* [databaseless branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/databaseless)
+* [databaseless-upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/databaseless-upgrade)
 
 There is also a variant that writes to a file output instead of a database to show the process to get Spring Batch
 to work without a database connection.
@@ -43,6 +62,9 @@ graph LR
 ```
 
 ### Multiple Database Variant
+
+* [multiple-databases branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases)
+* [multiple-databases-upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases-upgrade)
 
 There is a more complex version that includes multiple H2 databases
 The databases are used for the following:
@@ -72,17 +94,6 @@ graph LR
     style L fill: #DDA0DD
     style Job fill: #F0F8FF
 ```
-
-## Branches
-
-Each branch represents a specific configuration to help you understand the upgrade process and implementation options.
-
-* `main` - Spring Boot 2.x with Spring Batch 4.x (Pre-upgrade version with a single H2 database)
-* `upgrade` - Spring Boot 3.x with Spring Batch 5.x (Post-upgrade version with a single H2 database)
-* `databaseless` - Spring Boot 2.x without database dependency (File-based output)
-* `databaseless-upgrade` - Spring Boot 3.x without database dependency (File-based output)
-* `multiple-databases` - Spring Boot 2.x with multiple H2 databases
-* `multiple-databases-upgrade` - Spring Boot 3.x with multiple H2 databases
 
 ## Useful Resources
 
