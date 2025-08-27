@@ -38,17 +38,28 @@ graph LR
     style D fill: #87CEEB
 ```
 
-### Databaseless Variant
+### Databaseless (Resourceless) Variant
 
 * [databaseless branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/databaseless)
 * [databaseless-upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/databaseless-upgrade)
 
-There is also a variant that writes to a file output instead of a database to show the process to get Spring Batch
+This variant writes to a file output instead of a database to show the process to get Spring Batch
 to work without a database connection.
 
-*In general, I don't recommend this approach. If you don't want to use a database (or don't have access to one),
-I recommend replacing the external database dependency with an in-memory H2 database, as seen in the first example.
-This keeps things simpler from a bean-overriding perspective.*
+Due to some design issues with Spring Batch 5, this variant may be more complex than you might initially think. 
+Simply put, Batch makes the assumption that you always want to write job metadata to a database. 
+This is a design choice that will be addressed in Spring Batch 6.
+
+In the upgrade branch I've centralized everything needed to operate without a Batch database inside the 
+`resourcelessbatch` package. You should be able to drop this package in a Batch project and have an easier time
+not using a database.
+
+*Note: The `ResourcelessJobRepository` used by this approach is not thread safe. In general, only take the approach in this variant if you do not need scaling or resilience in your Batch jobs.*
+
+Relevant discussions:
+
+- https://github.com/spring-projects/spring-batch/issues/4718
+- https://stackoverflow.com/a/79492398
 
 ```mermaid
 graph LR
