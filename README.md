@@ -72,12 +72,12 @@ graph LR
     style D fill: #87CEEB
 ```
 
-### Multiple Database Variant
+### Multiple Databases Variant
 
 * [multiple-databases branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases)
 * [multiple-databases-upgrade branch](https://github.com/JamesMcMahon/spring-boot-demo-batchupgrade/tree/multiple-databases-upgrade)
 
-There is a more complex version that includes multiple H2 databases
+This is a more complex version that includes multiple H2 databases
 The databases are used for the following:
 
 * Batch Database - stores Spring Batch metadata and manages job execution.
@@ -98,6 +98,29 @@ graph LR
     BD[Batch Database] -.-> Job
     D --> F[User Database]
     Job -.-> AD[Batch Database]
+    L --> AUD[Audit Database]
+    style B fill: #90EE90
+    style C fill: #FFB6C1
+    style D fill: #87CEEB
+    style L fill: #DDA0DD
+    style Job fill: #F0F8FF
+```
+
+### Multiple Databases without a Batch Database Variant
+
+Same as the Multiple Databases variant, but without a Batch Database. Uses the `resourcelessbatch` package from the
+Databaseless variant to make Spring Batch work without a database. I recommend reading the Databaseless variant
+description to understand how this works.
+
+```mermaid
+graph LR
+    subgraph Job
+        A[File Input] --> B[Reader]
+        B --> C[Processor]
+        C --> D[Writer]
+        L[Audit Listener]
+    end
+    D --> F[User Database]
     L --> AUD[Audit Database]
     style B fill: #90EE90
     style C fill: #FFB6C1
