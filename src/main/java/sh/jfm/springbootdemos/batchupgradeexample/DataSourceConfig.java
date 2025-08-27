@@ -1,6 +1,5 @@
 package sh.jfm.springbootdemos.batchupgradeexample;
 
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,10 +14,9 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.sql.DataSource;
 
 /**
- * Declares three {@link javax.sql.DataSource DataSources}.
+ * Declares two {@link javax.sql.DataSource DataSources}.
  *
  * <ul>
- *   <li><strong>batchDataSource</strong> – Spring Batch metadata (primary)</li>
  *   <li><strong>userDataSource</strong> – user data written by the job</li>
  *   <li><strong>auditDataSource</strong> – separate audit schema</li>
  * </ul>
@@ -34,36 +32,18 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
-    //region Batch DataSource Configuration
-
-    /**
-     * Spring Batch metadata-repository DataSource; annotated with @Primary so it becomes the default.
-     * <p>
-     * This version of initialization is straightforward but requires the URL to be set in the properties file.
-     * Database type is inferred from that URL.
-     */
-    @Bean(name = "batchDataSource") // recognised automatically by Boot/Batch
-    @Primary
-    @ConfigurationProperties("spring.datasource.batch")
-    public DataSource batchDataSource() {
-        return DataSourceBuilder.create().build();
-    }
-    //endregion
-
     //region User DataSource Configuration
 
     /**
      * DataSource for user data written by the job.
-     * <p>
-     * You can optionally declare the DataSource type explicitly here. This is implicitly used by Spring Boot if
-     * omitted, like in the batchDataSource.
      *
      * @see <a href="https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/howto.html#howto.data-access.configure-custom-datasource">Configure a Custom DataSource</a>
      */
     @Bean(name = "userDataSource")
+    @Primary
     @ConfigurationProperties("app.datasource.user")
     public DataSource userDataSource() {
-        return DataSourceBuilder.create().type(HikariDataSource.class).build();
+        return DataSourceBuilder.create().build();
     }
 
     /**
